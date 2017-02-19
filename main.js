@@ -5,18 +5,23 @@ const apiHost = 'www.doomworld.com';
 const apiPath = '/idgames/api/api.php';
 
 function handleArgs(args) {
-  let searchText = args._;
+  let finalArgs = {};
+  let searchText = args._ || false;
+   
+  finalArgs.type = args.type || 'filename';
 
   // join all positional args together to form search string
   if(searchText) {
-    return searchText.join(' ');
+    finalArgs.query = searchText.join(' ');
   } else {
     return false;
   }
+
+  return finalArgs;
 }
 
-const searchText = handleArgs(argv);
-const apiAction = `?action=search&out=json&type=title&query=${searchText}`;
+const searchArgs = handleArgs(argv);
+const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${searchArgs.query}`;
 const requestOptions = {
   host: apiHost,
   path: apiPath + apiAction
