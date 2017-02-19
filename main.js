@@ -1,6 +1,5 @@
 const http = require('http');
 const argv = require('minimist')(process.argv.slice(2));
-
 const apiHost = 'www.doomworld.com';
 const apiPath = '/idgames/api/api.php';
 
@@ -20,26 +19,30 @@ function handleArgs(args) {
   return finalArgs;
 }
 
+function makeRequest(action, host, path) {
+  const requestOptions = {
+    host: host,
+    path: path + action
+  };
+
+  let request = http.request(requestOptions, (response) => {
+    var result = '';
+    
+    response.on('data', (data) => {
+      result += data;
+    });
+
+    response.on('end', () => {
+      console.log(result);
+    });
+
+    response.on('error', (error) => {
+      console.log(`Error: ${error.message}`);
+    });
+  }).end();
+}
+
 const searchArgs = handleArgs(argv);
 const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${searchArgs.query}`;
-const requestOptions = {
-  host: apiHost,
-  path: apiPath + apiAction
-};
 
-let request = http.request(requestOptions, (response) => {
-  var responseData = '';
-  
-  response.on('data', (data) => {
-    responseData += data;
-  });
-
-  response.on('end', () => {
-    console.log(responseData);
-  });
-
-  response.on('error', (error) => {
-    console.log(`Error: ${error.message}`);
-  });
-}).end();
-
+makeRequest(apiAction, apiHost, apiPath);
