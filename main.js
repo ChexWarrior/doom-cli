@@ -4,7 +4,7 @@ const Promise = require('promise');
 const apiHost = 'www.doomworld.com';
 const apiPath = '/idgames/api/api.php';
 
-// contains hosts of Doomworld Id Games mirrors
+// contains hosts of Doomworld idgames mirrors
 const mirrors = {
   'idaho': 'ftp://mirrors.syringanetworks.net/',
   'greece': 'http://ftp.ntua.gr/pub/vendors/',
