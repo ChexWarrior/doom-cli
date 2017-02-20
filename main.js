@@ -67,7 +67,7 @@ function makeRequest(action, host, path) {
       });
 
       response.on('end', () => {
-        resolve(result);
+        resolve(JSON.parse(result));
       });
 
       response.on('error', (error) => {
@@ -80,3 +80,4 @@ function makeRequest(action, host, path) {
 const searchArgs = handleArgs(argv);
 const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${searchArgs.query}`;
 makeRequest(apiAction, apiHost, apiPath).then(formatResults, handleError);
+
