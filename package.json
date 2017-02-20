@@ -13,6 +13,7 @@
   "author": "Andrew Lehman",
   "license": "ISC",
   "dependencies": {
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "promise": "^7.1.1"
   }
 }
