@@ -17,16 +17,14 @@ const mirrors = {
 function formatResults(results) {
   //console.dir(results);
   let formattedResults = [];
-  
+  let flattenedResults = results.content.file; 
+
   // place single result into array for easier processing
-  //if(results.constructor !== Array) {
-  //  results = [ results.content.file ]  
-  //} 
+  if(flattenedResults.constructor !== Array) {
+    flattenedResults = [ results.content.file ]  
+  } 
   
-  // flatten results
-  results = results.content.file;
-  //console.dir(results);
-  results.forEach((result) => {
+  flattenedResults.forEach((result) => {
     formattedResults.push({
       'title': result.title,
       'author': result.author,
