@@ -15,17 +15,22 @@ const mirrors = {
 }
 
 function formatResults(results) {
-  // place single result into array for easier processing
-  if(results.constructor !== Array) {
-    results = [results];
-  } 
-  
+  //console.dir(results);
   let formattedResults = [];
+  
+  // place single result into array for easier processing
+  //if(results.constructor !== Array) {
+  //  results = [ results.content.file ]  
+  //} 
+  
+  // flatten results
+  results = results.content.file;
+  //console.dir(results);
   results.forEach((result) => {
     formattedResults.push({
-      'title': result.content.file.title,
-      'author': result.content.file.author,
-      'url': result.content.file.idgamesurl
+      'title': result.title,
+      'author': result.author,
+      'url': result.idgamesurl
     });
   });
   
