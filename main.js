@@ -15,7 +15,21 @@ const mirrors = {
 }
 
 function formatResults(results) {
-  console.dir(JSON.parse(results));
+  // place single result into array for easier processing
+  if(results.constructor !== Array) {
+    results = [results];
+  } 
+  
+  let formattedResults = [];
+  results.forEach((result) => {
+    formattedResults.push({
+      'title': result.content.file.title,
+      'author': result.content.file.author,
+      'url': result.content.file.idgamesurl
+    });
+  });
+  
+  console.dir(formattedResults);
 }
 
 function handleError(error) {
