@@ -19,6 +19,8 @@ function formatResults(results) {
   let flattenedResults = results.content.file; 
   let resultCount = 0;
   let totalResults = 0;
+
+  //TODO: Handle no results
   
   // place single result into array for easier processing
   if(flattenedResults.constructor !== Array) {
@@ -82,8 +84,5 @@ function makeRequest(action, host, path) {
 }
 
 const searchArgs = handleArgs(argv);
-
 const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${encodeURIComponent(searchArgs.query)}`;
-//console.log(apiAction);
 makeRequest(apiAction, apiHost, apiPath).then(formatResults, handleError);
-
