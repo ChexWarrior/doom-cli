@@ -43,9 +43,8 @@ function handleError(error) {
 
 function handleArgs(args) {
   let finalArgs = {};
-  let searchText = args._ || false;
-   
-  finalArgs.type = args.type || 'filename';
+  let searchText = args._ || false;   
+  finalArgs.type = args.type || args.t || 'filename';
 
   // join all positional args together to form search string
   if(searchText) {
