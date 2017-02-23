@@ -18,21 +18,20 @@ function formatResults(results) {
   //console.dir(results);
   let formattedResults = [];
   let flattenedResults = results.content.file; 
-
+  let resultCount = 0;
+  
   // place single result into array for easier processing
   if(flattenedResults.constructor !== Array) {
     flattenedResults = [ results.content.file ]  
   } 
   
+  console.log('\n(#) (Title) - (Author)');
+  console.log('---------------------------');
+
   flattenedResults.forEach((result) => {
-    formattedResults.push({
-      'title': result.title,
-      'author': result.author,
-      'url': result.idgamesurl
-    });
+    resultCount += 1;
+    console.log(`(${resultCount}) ${result.title} - ${result.author}`);
   });
-  
-  console.dir(formattedResults);
 }
 
 function handleError(error) {
