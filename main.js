@@ -82,6 +82,8 @@ function makeRequest(action, host, path) {
 }
 
 const searchArgs = handleArgs(argv);
-const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${searchArgs.query}`;
+
+const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${encodeURIComponent(searchArgs.query)}`;
+//console.log(apiAction);
 makeRequest(apiAction, apiHost, apiPath).then(formatResults, handleError);
 
