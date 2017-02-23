@@ -15,17 +15,20 @@ const mirrors = {
 }
 
 function formatResults(results) {
-  //console.dir(results);
   let formattedResults = [];
   let flattenedResults = results.content.file; 
   let resultCount = 0;
+  let totalResults = 0;
   
   // place single result into array for easier processing
   if(flattenedResults.constructor !== Array) {
     flattenedResults = [ results.content.file ]  
+    totalResults = 1;
+  } else {
+    totalResults = flattenedResults.length;
   } 
   
-  console.log('\n(#) (Title) - (Author)');
+  console.log(`\nSEARCH RESULTS (Total: ${totalResults})`);
   console.log('---------------------------');
 
   flattenedResults.forEach((result) => {
