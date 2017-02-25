@@ -11,9 +11,22 @@ const mirrors = {
   'greece': 'http://ftp.ntua.gr/pub/vendors/',
   'texas': 'http://ftp.mancubus.net/pub/',
   'germany': 'https://www.quaddicted.com/files/',
-  'new york': 'http://youfailit.net/pub/',
+  'new york': 'http://youfailit.net/pub/idgames/',
   'virginia': 'http://www.gamers.org/pub/'
 };
+
+function handleDownload(result) {
+  let file = fs.createWriteStream(`${result.filename}`);
+  let downloadUrl = result.url.replace('idgames://', mirrors['new york']);
+  let downloadRequest = request(downloadUrl)
+    .pipe(file)
+    .on('error', (error) => {
+      console.dir(error);
+    })
+    .on('close', () => {
+      console.log('Download complete!');
+    });
+}
 
 function handleUserInput(results) {
   let answer = '';
