@@ -108,36 +108,22 @@ function handleArgs(args) {
   return finalArgs;
 }
 
-function makeRequest(action, host, path) {
+function makeRequest(uri) {
   return new Promise(function (resolve, reject) {
-    const requestOptions = {
-      host: host,
-      path: path + action
-    };
-
-    let request = http.request(requestOptions, (response) => {
-      var result = '';
-      
-      response.on('data', (data) => {
-        result += data;
-      });
-
-      response.on('end', () => {
-        resolve(JSON.parse(result));
-      });
-
-      response.on('error', (error) => {
+    request.get(uri, (error, response, body) => {
+      if(error) {
         reject(error.message);
-      });
-    }).end();
+      } else {
+        resolve(JSON.parse(body));
+      }
+    });
   });
 }
 
 const searchArgs = handleArgs(argv);
 const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${encodeURIComponent(searchArgs.query)}`;
-let results = [];
 
-makeRequest(apiAction, apiHost, apiPath)
+makeRequest(apiEndpoint + apiAction)
   .then(parseResults, handleError)
   .then(displayResults, handleError)
   .then(handleUserInput, handleError);
