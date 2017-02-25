@@ -81,6 +81,7 @@ function parseResults(results) {
       id: resultCount,
       title: result.title,
       author: result.author,
+      filename: result.filename,
       url: result.idgamesurl
     });
   });
