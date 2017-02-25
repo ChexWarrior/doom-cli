@@ -1,4 +1,4 @@
-const http = require('http');
+const request = require('request');
 const argv = require('minimist')(process.argv.slice(2));
 const readline = require('readline');
 const fs = require('fs');
