@@ -55,7 +55,7 @@ function handleUserInput(results) {
   promptForID();
 }
 
-function displayResults(results) {    
+function displayResults(results) {
   console.log(`\nSEARCH RESULTS (Total: ${results.length})`);
   console.log('---------------------------');
 
@@ -68,11 +68,15 @@ function displayResults(results) {
 
 function parseResults(results) {
   let parsedResults = [];
-  let flattenedResults = results.content.file; 
+  let flattenedResults = results.content ? results.content.file : false; 
   let resultCount = 0;
 
+  if(!flattenedResults) {
+    console.log('No results!');
+    process.exit(0);
+  }
+
   //TODO: Add message when results are cut off (see API notes)
-  //TODO: Handle no results
   // place single result into array for easier processing
   if(flattenedResults.constructor !== Array) {
     flattenedResults = [ results.content.file ]  
