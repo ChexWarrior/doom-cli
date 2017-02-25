@@ -16,8 +16,9 @@ const mirrors = {
 
 function handleDownload(result, args) {
   let file = fs.createWriteStream(`${result.filename}`);
-  let mirror = args.mirror;
-  let downloadUrl = result.url.replace('idgames://', mirrors[mirror]);
+  let chosenMirror = args.mirror;
+  let downloadUrl = result.url.replace('idgames://', mirrors[chosenMirror]);
+  
   console.log(`Downloading ${result.filename}@${downloadUrl}...`);
   
   let downloadRequest = request(downloadUrl)
@@ -106,7 +107,11 @@ function handleArgs(args) {
   finalArgs.showHelp = args.help || args.h || false;
 
   if(finalArgs.showHelp) {
-    console.log(`doom-cli [optional args] search terms \n-h, --help: Show this help text \n-t, --type: Type of search. Can be filename, title, author, email, description, credits, editors or textfile. Defaults to filename. \n-m, --mirror: IdGames mirror from which to download files. Defaults to New York.`);
+    console.log(`doom-cli [-htm] search terms
+      -h, --help: Show this help text
+      -t, --type: Type of search. Can be filename, title, author, email, description, credits, editors or textfile. Defaults to filename.
+      -m, --mirror: IdGames mirror from which to download files. Can be one of the following: germany, greece, texas, new york or virginia. Defaults to new york.
+    `);
     process.exit(0);
   }
 
