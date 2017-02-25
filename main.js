@@ -1,6 +1,7 @@
 const http = require('http');
 const argv = require('minimist')(process.argv.slice(2));
 const readline = require('readline');
+const fs = require('fs');
 const Promise = require('promise');
 const apiHost = 'www.doomworld.com';
 const apiPath = '/idgames/api/api.php';
@@ -15,6 +16,30 @@ const mirrors = {
   'virginia': 'http://www.gamers.org/pub/'
 };
 
+function handleUserInput(results) {
+  let answer = '';
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  let promptForID = () => {
+    rl.question('Enter (ID) of item to download: ', (input) => {
+      answer = parseInt(input, 10);
+
+      if(/[^0-9]/.test(answer) || answer < 0 || answer > results.length) {
+        console.log('Please enter a valid ID');
+        promptForID();
+      } else {
+        rl.close();
+        return answer;
+      }
+    });
+  };
+
+  return promptForID();
+}
+
 function displayResults(results) {    
   console.log(`\nSEARCH RESULTS (Total: ${results.length})`);
   console.log('---------------------------');
@@ -22,6 +47,8 @@ function displayResults(results) {
   results.forEach((result) => {
     console.log(`(${result.id}) ${result.title} - ${result.author}`);
   });
+
+  return results;
 }
 
 function parseResults(results) {
@@ -29,6 +56,7 @@ function parseResults(results) {
   let flattenedResults = results.content.file; 
   let resultCount = 0;
 
+  //TODO: Add message when results are cut off (see API notes)
   //TODO: Handle no results
   // place single result into array for easier processing
   if(flattenedResults.constructor !== Array) {
@@ -94,7 +122,9 @@ function makeRequest(action, host, path) {
 
 const searchArgs = handleArgs(argv);
 const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${encodeURIComponent(searchArgs.query)}`;
+let results = [];
 
 makeRequest(apiAction, apiHost, apiPath)
   .then(parseResults, handleError)
-  .then(displayResults, handleError);
+  .then(displayResults, handleError)
+  .then(handleUserInput, handleError);
