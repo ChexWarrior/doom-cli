@@ -5,6 +5,7 @@ const fs = require('fs');
 const Promise = require('promise');
 const apiEndpoint = 'https://www.doomworld.com/idgames/api/api.php';
 
+// TODO: Include ftp mirrors
 // contains hosts of Doomworld idgames mirrors
 const mirrors = {
   'greece': 'http://ftp.ntua.gr/pub/vendors/idgames/',
@@ -31,7 +32,8 @@ function handleDownload(result, args) {
     });
 }
 
-function handleUserInput(results) {
+function handleUserInput(response) {
+  let results = response.results;
   let answer = '';
   const rl = readline.createInterface({
     input: process.stdin,
@@ -47,7 +49,7 @@ function handleUserInput(results) {
         promptForID();
       } else {
         rl.close();
-        handleDownload(results[answer - 1], searchArgs);
+        handleDownload(results[answer - 1], response.args);
       }
     });
   };
@@ -55,20 +57,28 @@ function handleUserInput(results) {
   promptForID();
 }
 
-function displayResults(results) {
-  console.log(`\nSEARCH RESULTS (Total: ${results.length})`);
+function displayResults(response) {
+  const results = response.results;
+  const numResults = results.length;
+
+  console.log(`\nSEARCH RESULTS (Total: ${numResults})`);
   console.log('---------------------------');
 
   results.forEach((result) => {
     console.log(`(${result.id}) ${result.title} - ${result.author}`);
   });
 
-  return results;
+  return {
+    results: results,
+    args: response.args
+  };
 }
 
-function parseResults(results) {
+function parseResults(response) {
   let parsedResults = [];
-  let flattenedResults = results.content ? results.content.file : false; 
+  let flattenedResults = response.results.content 
+                       ? response.results.content.file 
+                       : false; 
   let resultCount = 0;
 
   if(!flattenedResults) {
@@ -93,7 +103,10 @@ function parseResults(results) {
     });
   });
 
-  return parsedResults;
+  return { 
+    results: parsedResults,
+    args: response.args
+  };
 }
 
 function handleError(error) {
@@ -129,22 +142,25 @@ function handleArgs(args) {
   return finalArgs;
 }
 
-function makeRequest(uri) {
+function makeRequest(uri, args) {
   return new Promise(function (resolve, reject) {
     request.get(uri, (error, response, body) => {
       if(error) {
         reject(error.message);
       } else {
-        resolve(JSON.parse(body));
+        resolve({ 
+          results: JSON.parse(body),
+          args: args
+        });
       }
     });
   });
 }
 
 const searchArgs = handleArgs(argv);
-const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${encodeURIComponent(searchArgs.query)}`;
+const apiAction = `${apiEndpoint}?action=search&out=json&type=${searchArgs.type}&query=${encodeURIComponent(searchArgs.query)}`;
 
-makeRequest(apiEndpoint + apiAction)
+makeRequest(apiAction, searchArgs)
   .then(parseResults, handleError)
   .then(displayResults, handleError)
   .then(handleUserInput, handleError);
