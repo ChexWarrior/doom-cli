@@ -3,8 +3,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const readline = require('readline');
 const fs = require('fs');
 const Promise = require('promise');
-const apiHost = 'www.doomworld.com';
-const apiPath = '/idgames/api/api.php';
+const apiEndpoint = 'https://www.doomworld.com/idgames/api/api.php';
 
 // contains hosts of Doomworld idgames mirrors
 const mirrors = {
