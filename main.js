@@ -39,17 +39,17 @@ function handleUserInput(results) {
     rl.question('Enter (ID) of item to download: ', (input) => {
       answer = parseInt(input, 10);
 
-      if(/[^0-9]/.test(answer) || answer < 0 || answer > results.length) {
+      if(/[^0-9]/.test(answer) || answer <= 0 || answer > results.length) {
         console.log('Please enter a valid ID');
         promptForID();
       } else {
         rl.close();
-        return answer;
+        handleDownload(results[answer - 1]);
       }
     });
   };
 
-  return promptForID();
+  promptForID();
 }
 
 function displayResults(results) {    
