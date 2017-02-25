@@ -7,10 +7,9 @@ const apiEndpoint = 'https://www.doomworld.com/idgames/api/api.php';
 
 // contains hosts of Doomworld idgames mirrors
 const mirrors = {
-  'idaho': 'ftp://mirrors.syringanetworks.net/',
-  'greece': 'http://ftp.ntua.gr/pub/vendors/',
-  'texas': 'http://ftp.mancubus.net/pub/',
-  'germany': 'https://www.quaddicted.com/files/',
+  'greece': 'http://ftp.ntua.gr/pub/vendors/idgames/',
+  'texas': 'http://ftp.mancubus.net/pub/idgames/',
+  'germany': 'https://www.quaddicted.com/files/idgames/',
   'new york': 'http://youfailit.net/pub/idgames/',
   'virginia': 'http://www.gamers.org/pub/idgames/'
 };
