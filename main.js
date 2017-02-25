@@ -18,6 +18,9 @@ const mirrors = {
 function handleDownload(result) {
   let file = fs.createWriteStream(`${result.filename}`);
   let downloadUrl = result.url.replace('idgames://', mirrors['new york']);
+
+  console.log(`Downloading ${result.filename}@${downloadUrl}...`);
+  
   let downloadRequest = request(downloadUrl)
     .pipe(file)
     .on('error', (error) => {
