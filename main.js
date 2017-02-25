@@ -98,7 +98,15 @@ function handleError(error) {
 
 function handleArgs(args) {
   let finalArgs = {};
-  let searchText = args._ || false;   
+  let searchText = args._ || false;
+
+  finalArgs.showHelp = args.help || args.h || false;
+
+  if(finalArgs.showHelp) {
+    console.log(`doom-cli [optional args] search terms \n-h, --help: Show this help text \n-t, --type: Type of search. Can be filename, title, author, email, description, credits, editors or textfile. Defaults to filename.`);
+    process.exit(0);
+  }
+
   finalArgs.type = args.type || args.t || 'filename';
 
   // join all positional args together to form search string
