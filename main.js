@@ -20,7 +20,7 @@ function handleDownload(result, args) {
   let chosenMirror = args.mirror;
   let downloadUrl = result.url.replace('idgames://', mirrors[chosenMirror]);
   
-  console.log(`Downloading ${result.filename}@${downloadUrl}...`);
+  console.log(`\nDownloading ${result.filename}@${downloadUrl}...`);
   
   let downloadRequest = request(downloadUrl)
     .pipe(file)
@@ -33,32 +33,38 @@ function handleDownload(result, args) {
 }
 
 function handleUserInput(response) {
-  let results = response.results;
-  let answer = '';
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
+  const results = response.results;
 
-  let promptForID = () => {
-    rl.question('Enter (ID) of item to download: ', (input) => {
-      answer = parseInt(input, 10);
-
-      if(/[^0-9]/.test(answer) || answer <= 0 || answer > results.length) {
-        console.log('Please enter a valid ID');
-        promptForID();
-      } else {
-        rl.close();
-        handleDownload(results[answer - 1], response.args);
-      }
+  if(results.length === 1 && response.args.autoDownload) {
+    handleDownload(results[0], response.args);
+  } else {
+    let answer = '';
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
     });
-  };
 
-  promptForID();
+    let promptForID = () => {
+      rl.question('Enter (ID) of item to download: ', (input) => {
+        answer = parseInt(input, 10);
+
+        // TODO: Add extra options like exiting
+        if(/[^0-9]/.test(answer) || answer <= 0 || answer > results.length) {
+          console.log('Please enter a valid ID');
+          promptForID();
+        } else {
+          rl.close();
+          handleDownload(results[answer - 1], response.args);
+        }
+      });
+    };
+
+    promptForID();
+  }
 }
 
 function displayResults(response) {
-  const results = response.results;
+  let results = response.results;
   const numResults = results.length;
 
   console.log(`\nSEARCH RESULTS (Total: ${numResults})`);
@@ -89,7 +95,7 @@ function parseResults(response) {
   //TODO: Add message when results are cut off (see API notes)
   // place single result into array for easier processing
   if(flattenedResults.constructor !== Array) {
-    flattenedResults = [ results.content.file ]  
+    flattenedResults = [ flattenedResults ]  
   }
 
   flattenedResults.forEach((result) => {
@@ -124,6 +130,7 @@ function handleArgs(args) {
       -h, --help: Show this help text
       -t, --type: Type of search. Can be filename, title, author, email, description, credits, editors or textfile. Defaults to filename.
       -m, --mirror: IdGames mirror from which to download files. Can be one of the following: germany, greece, texas, new york or virginia. Defaults to new york.
+      -d, --download: By default doom-cli will automatically download a file if there is only one search result. Setting this to false will stop thise behavior. Defaults to true.
     `);
     process.exit(0);
   }
@@ -131,6 +138,7 @@ function handleArgs(args) {
   finalArgs.mirror = args.mirror || args.m || 'new york';
   finalArgs.mirror = finalArgs.mirror.toLowerCase();
   finalArgs.type = args.type || args.t || 'filename';
+  finalArgs.autoDownload = args.download || args.d || true;
 
   // join all positional args together to form search string
   if(searchText) {
