@@ -1,5 +1,6 @@
 const http = require('http');
 const argv = require('minimist')(process.argv.slice(2));
+const readline = require('readline');
 const Promise = require('promise');
 const apiHost = 'www.doomworld.com';
 const apiPath = '/idgames/api/api.php';
@@ -12,31 +13,39 @@ const mirrors = {
   'germany': 'https://www.quaddicted.com/files/',
   'new york': 'http://youfailit.net/pub/',
   'virginia': 'http://www.gamers.org/pub/'
+};
+
+function displayResults(results) {    
+  console.log(`\nSEARCH RESULTS (Total: ${results.length})`);
+  console.log('---------------------------');
+
+  results.forEach((result) => {
+    console.log(`(${result.id}) ${result.title} - ${result.author}`);
+  });
 }
 
-function formatResults(results) {
-  let formattedResults = [];
+function parseResults(results) {
+  let parsedResults = [];
   let flattenedResults = results.content.file; 
   let resultCount = 0;
-  let totalResults = 0;
 
   //TODO: Handle no results
-  
   // place single result into array for easier processing
   if(flattenedResults.constructor !== Array) {
     flattenedResults = [ results.content.file ]  
-    totalResults = 1;
-  } else {
-    totalResults = flattenedResults.length;
-  } 
-  
-  console.log(`\nSEARCH RESULTS (Total: ${totalResults})`);
-  console.log('---------------------------');
+  }
 
   flattenedResults.forEach((result) => {
     resultCount += 1;
-    console.log(`(${resultCount}) ${result.title} - ${result.author}`);
+    parsedResults.push({
+      id: resultCount,
+      title: result.title,
+      author: result.author,
+      url: result.idgamesurl
+    });
   });
+
+  return parsedResults;
 }
 
 function handleError(error) {
@@ -85,4 +94,7 @@ function makeRequest(action, host, path) {
 
 const searchArgs = handleArgs(argv);
 const apiAction = `?action=search&out=json&type=${searchArgs.type}&query=${encodeURIComponent(searchArgs.query)}`;
-makeRequest(apiAction, apiHost, apiPath).then(formatResults, handleError);
+
+makeRequest(apiAction, apiHost, apiPath)
+  .then(parseResults, handleError)
+  .then(displayResults, handleError);
