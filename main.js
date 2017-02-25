@@ -12,13 +12,13 @@ const mirrors = {
   'texas': 'http://ftp.mancubus.net/pub/',
   'germany': 'https://www.quaddicted.com/files/',
   'new york': 'http://youfailit.net/pub/idgames/',
-  'virginia': 'http://www.gamers.org/pub/'
+  'virginia': 'http://www.gamers.org/pub/idgames/'
 };
 
-function handleDownload(result) {
+function handleDownload(result, args) {
   let file = fs.createWriteStream(`${result.filename}`);
-  let downloadUrl = result.url.replace('idgames://', mirrors['new york']);
-
+  let mirror = args.mirror;
+  let downloadUrl = result.url.replace('idgames://', mirrors[mirror]);
   console.log(`Downloading ${result.filename}@${downloadUrl}...`);
   
   let downloadRequest = request(downloadUrl)
@@ -47,7 +47,7 @@ function handleUserInput(results) {
         promptForID();
       } else {
         rl.close();
-        handleDownload(results[answer - 1]);
+        handleDownload(results[answer - 1], searchArgs);
       }
     });
   };
@@ -107,10 +107,12 @@ function handleArgs(args) {
   finalArgs.showHelp = args.help || args.h || false;
 
   if(finalArgs.showHelp) {
-    console.log(`doom-cli [optional args] search terms \n-h, --help: Show this help text \n-t, --type: Type of search. Can be filename, title, author, email, description, credits, editors or textfile. Defaults to filename.`);
+    console.log(`doom-cli [optional args] search terms \n-h, --help: Show this help text \n-t, --type: Type of search. Can be filename, title, author, email, description, credits, editors or textfile. Defaults to filename. \n-m, --mirror: IdGames mirror from which to download files. Defaults to New York.`);
     process.exit(0);
   }
 
+  finalArgs.mirror = args.mirror || args.m || 'new york';
+  finalArgs.mirror = finalArgs.mirror.toLowerCase();
   finalArgs.type = args.type || args.t || 'filename';
 
   // join all positional args together to form search string
